@@ -77,6 +77,7 @@
  *      char    *cfg_get_hash_value( int, char *, char *, char * )
  *      char    *cfg_get_filename( int )
  *      char    *cfg_error_msg( int )
+ *      char    *cfg_get_version() ;
  *      char    **cfg_get_sections( int )
  *      char    **cfg_get_keywords( int, char * )
  *      char    **cfg_get_values( int indx, char *section, char *keyword )
@@ -94,8 +95,9 @@
 
 // globals
 
-static int      debug_flag = 0 ;
-static int      config_entry_num = 0  ;
+static char     *version          = "v1.1" ;
+static int      debug_flag        = 0 ;
+static int      config_entry_num  = 0  ;
 static struct config *config_head = (struct config *)NULL ;
 
 // internal functions
@@ -122,6 +124,7 @@ char    *cfg_get_value( int, char *, char * ) ;
 char    **cfg_get_values( int, char *, char * ) ;
 char    *cfg_get_filename( int ) ;
 char    *cfg_error_msg( int ) ;
+char    *cfg_get_version() ;
 char    *cfg_get_type_str( int, char *, char * ) ;
 int     cfg_get_type( int, char *, char * ) ;
 
@@ -149,6 +152,12 @@ cfg_set_debug( int value )
 
     debug_flag = value ;
     return( old_debug ) ;
+}
+
+char *
+cfg_get_version()
+{
+    return( version ) ;
 }
 
 
@@ -835,8 +844,8 @@ cfg_show_configs()
     struct  config  *ptr ;
     struct  section *sp ;
     struct  keyword *kp ;
-    char    *err, *file, *type_str, **vp ;
-    short   count, type ;
+    char    *err, *file, *type_str, **vp, *p, type_s[10] ;
+    short   count, type, i ;
 
     for ( ptr = config_head ; ptr ; ptr = ptr->next ) {
         err = ptr->error ;
@@ -848,7 +857,7 @@ cfg_show_configs()
         printf( "%-20s %s\n",  "Filename:", file ) ;
         printf( "%-20s %d\n",  "Index:", ptr->index ) ;
         printf( "%-20s %s\n",  "Error Msg:", err ) ;
-        printf( "%-20s\n",  "Data:" ) ;
+        printf( "%-20s\n",  "\nData:" ) ;
 
         // now for each section
 
@@ -877,17 +886,25 @@ cfg_show_configs()
                     break ;
                 }
 
+                /* zero out type_s string */
+                for ( i=0 ; i < sizeof( type_s)-1 ; i++ )
+                    type_s[i] = '\0' ;
+
+                type_s[0] = '(' ;
+                strncat( type_s+1, type_str, 9 ) ;
+                strcat( type_s, ")" ) ;
+
                 type = kp->type ;
                 if ( type == TYPE_SCALAR ) {
-                    printf( "      %-20s \'%s\'\n", kp->name, kp->value ) ;
+                    printf( "      %-20s %-8s \'%s\'\n", kp->name, type_s, kp->value ) ;
                 } else if ( type == TYPE_ARRAY ) {
                     if ( kp->values ) {
                         int first = 1 ;
                         for ( vp = kp->values ; *vp ; vp++ ) {
                             if ( first ) {
-                                printf( "      %-20s \'%s\'\n", kp->name, *vp ) ;
+                                printf( "      %-20s %-8s \'%s\'\n", kp->name, type_s, *vp ) ;
                             } else {
-                                printf( "      %-20s \'%s\'\n", "", *vp ) ;
+                                printf( "      %-20s %-8s \'%s\'\n", "", "", *vp ) ;
                             }
                             first = 0 ;
                         }
@@ -898,11 +915,11 @@ cfg_show_configs()
                         struct hash *hp ;
                         for ( hp = kp->hash_value ; hp ; hp = hp->next ) {
                             if ( first ) {
-                                printf( "      %-20s %s = \'%s\'\n",
-                                    kp->name, hp->name, hp->value ) ;
+                                printf( "      %-20s %-8s %s = \'%s\'\n",
+                                    kp->name, type_s, hp->name, hp->value ) ;
                             } else {
-                                printf( "      %-20s %s = \'%s\'\n",
-                                    "", hp->name, hp->value ) ;
+                                printf( "      %-20s %-8s %s = \'%s\'\n",
+                                    "", "", hp->name, hp->value ) ;
                             }
                             first = 0 ;
                         }

@@ -1,0 +1,12 @@
+1.0     Jan 17, 2015:
+        - initial release
+
+1.1     Nov 27, 2017:
+        - show_configs() now shows type of data (scalar, hash, array, ...)
+        - test.c program much smarter.  demonstrates more functions,
+          uses more than 1 config
+        - cfg_get_version() created
+        - test configs moved into conf directory
+        - RELEASE-NOTES created
+        - README.md updated
+        - .gitignore created
