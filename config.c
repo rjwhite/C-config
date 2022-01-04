@@ -14,8 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * RJ White
- * rj@moxad.com
- * Dec 2014
+ * rj.white@moxad.com
  *
  * handle config file(s).
  * format is:
@@ -95,7 +94,7 @@
 
 // globals
 
-static char     *version          = "v1.1" ;
+static char     *version          = "v1.2" ;
 static int      debug_flag        = 0 ;
 static int      config_entry_num  = 0  ;
 static struct config *config_head = (struct config *)NULL ;
@@ -133,6 +132,7 @@ extern void *malloc( size_t );
 extern void exit( int );
 extern int strncmp( const char *, const char *, size_t );
 extern size_t strlen( const char * );
+extern int tolower( int );
 
 
 /*
@@ -405,6 +405,10 @@ process_file( int indx, struct config *ptr, char *file )
                  */
                 for ( p=line ; (( *p == SPACE ) || ( *p == TAB )) ; p++ ) ;
 
+                // see if it is an indented comment
+                if ( *p == '#' )
+                    continue ;
+
                 if ( continuation_flag ) {
                     strcat( total_line, p ) ;
                     continue ;          // get the next line
@@ -541,7 +545,7 @@ process_file( int indx, struct config *ptr, char *file )
 /*
  * store keyword/value(s)
  * This function is overloaded so it it handles scalars, arrays
- * and hashes.  Which inouyt argument it uses depends on the
+ * and hashes.  Which input argument it uses depends on the
  * value 'type'
  *
  * Inputs:
@@ -574,7 +578,6 @@ store_values( int indx, short type, char *key, char *val )
      * a global to track the current session since there can be multiple
      * concurrent configs being processed.  We know which config we want
      * by the index (Arg 1)
-     * XXX is this true?  can probably use a global...  -rj
      */
 
     found = 0 ;

@@ -10,3 +10,10 @@
         - RELEASE-NOTES created
         - README.md updated
         - .gitignore created
+
+1.2     Jan 4, 2022:
+        - now allow indented comments in a config instead of just at
+          the beginning of a line
+        - typos fixed, updated my e-mail address
+        - config/c and test.c now compile cleaning - no warnings
+        - conf/test.conf now has an indented comment
