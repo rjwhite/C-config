@@ -17,3 +17,7 @@
         - typos fixed, updated my e-mail address
         - config/c and test.c now compile cleaning - no warnings
         - conf/test.conf now has an indented comment
+
+1.2.1   Jan 2, 2023:
+        - added a couple of missing lines of declarations in code
+          example in README.md

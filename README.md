@@ -75,6 +75,8 @@ around a value.
     extern char    *cfg_get_filename( int ) ;
     extern char    *cfg_get_version() ;
     extern int     cfg_get_type( int, char *, char * ) ;
+    extern int     cfg_set_debug( int ) ;
+    extern void    cfg_debug( const char *fmt, ... ) ;
     
     int main( int argc, char *argv[] )
     {
